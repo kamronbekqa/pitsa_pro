@@ -1,0 +1,127 @@
+.offers-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.offers-section {
+  padding: var(--spacing-8) 0;
+}
+
+.offers-grid {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+@media (min-width: 768px) {
+  .offers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.offer-card {
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.offer-card:hover {
+  transform: translateY(-6px);
+}
+
+.primary-offer {
+  background: linear-gradient(135deg, rgba(255, 106, 0, 0.2), rgba(255, 179, 71, 0.05));
+  border: 1px solid rgba(255, 106, 0, 0.3);
+}
+
+.primary-offer:hover {
+  box-shadow: 0 10px 40px rgba(255, 106, 0, 0.15);
+  border-color: rgba(255, 106, 0, 0.6);
+}
+
+.secondary-offer {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+}
+
+.secondary-offer:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border-color: var(--secondary);
+}
+
+.offer-content {
+  position: relative;
+  z-index: 2;
+}
+
+.offer-badge {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-3);
+  box-shadow: var(--shadow-glow);
+}
+
+.secondary-offer .offer-badge {
+  background: var(--secondary);
+  color: var(--bg-base);
+  box-shadow: none;
+}
+
+.offer-card h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-2);
+  line-height: 1.2;
+}
+
+.offer-card p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-4);
+}
+
+.offer-button {
+  background: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.primary-offer .offer-button:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.secondary-offer .offer-button {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 8px;
+}
+
+.secondary-offer .offer-button:hover {
+  background: var(--primary);
+  color: white;
+}

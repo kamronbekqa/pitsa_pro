@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div id="content-main">
+  <div class="module" style="max-width: 820px;">
+    <h2>Buyurtma #{{ order.id }} ni bekor qilish</h2>
+    <div style="padding: 18px;">
+      <p><strong>Mijoz:</strong> {{ order.customer_name }}</p>
+      <p><strong>Telefon:</strong> {{ order.customer_phone }}</p>
+      <p><strong>Jami summa:</strong> {{ order.total_price }} so'm</p>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="submit-row" style="padding: 12px 0 0;">
+          <input type="submit" class="default" value="Bekor qilishni tasdiqlash">
+          <a class="button cancel-link" href="{% url 'admin:store_order_changelist' %}">Ortga qaytish</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

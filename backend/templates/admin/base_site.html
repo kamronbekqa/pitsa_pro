@@ -1,0 +1,105 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | PitsaMaster Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">PitsaMaster Admin</a></h1>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  :root {
+    --primary: #f97316;
+    --secondary: #fb923c;
+    --link-fg: #ea580c;
+    --link-selected-fg: #c2410c;
+  }
+
+  #header {
+    background: #111827;
+    color: #fff;
+  }
+
+  #branding h1,
+  #branding h1 a:link,
+  #branding h1 a:visited {
+    color: #fff;
+    font-weight: 800;
+  }
+
+  div.breadcrumbs {
+    background: #f97316;
+  }
+
+  .module h2,
+  .module caption,
+  .inline-group h2 {
+    background: #f97316;
+  }
+
+  .button.default,
+  input[type=submit].default,
+  .submit-row input.default {
+    background: #f97316;
+  }
+
+  .button.default:hover,
+  input[type=submit].default:hover,
+  .submit-row input.default:hover {
+    background: #ea580c;
+  }
+
+  #content-main .module {
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .results table thead th {
+    background: #111827;
+    color: #f9fafb;
+  }
+
+  .results table thead th a:link,
+  .results table thead th a:visited {
+    color: #f9fafb;
+  }
+
+  .results tbody tr:hover {
+    background: #1f2937;
+  }
+
+  .results tbody tr:hover td,
+  .results tbody tr:hover th,
+  .results tbody tr:hover a {
+    color: #f9fafb;
+  }
+
+  .field-colored_status strong {
+    font-size: 13px;
+  }
+
+  .admin-order-btn {
+    display: inline-block;
+    padding: 7px 10px;
+    margin: 2px 5px 2px 0;
+    border-radius: 6px;
+    color: #fff !important;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .admin-order-approve {
+    background: #16a34a;
+  }
+
+  .admin-order-cancel {
+    background: #dc2626;
+  }
+
+  .admin-order-btn:hover {
+    filter: brightness(1.08);
+  }
+</style>
+{% endblock %}
