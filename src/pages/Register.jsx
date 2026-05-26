@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
+import { apiUrl } from '../api';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -37,7 +38,7 @@ export default function Register() {
 
     try {
       setIsSubmitting(true);
-      const response = await fetch('http://127.0.0.1:8000/api/users/register/', {
+      const response = await fetch(apiUrl('/api/users/register/'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

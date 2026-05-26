@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 import './Cart.css';
+import { apiUrl } from '../api';
 
 export default function Cart() {
   const { cartItems, removeFromCart, clearCart, cartTotal, finalTotal, promoDiscount, setPromoDiscount, setPromoCodeId, promoCodeId } = useCart();
@@ -55,7 +56,7 @@ export default function Cart() {
 
   const applyPromo = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/store/apply-promo/', {
+      const res = await fetch(apiUrl('/api/store/apply-promo/'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: promoInput })
@@ -107,7 +108,7 @@ export default function Cart() {
 
     try {
       setIsSubmitting(true);
-      const res = await fetch('http://127.0.0.1:8000/api/store/orders/', {
+      const res = await fetch(apiUrl('/api/store/orders/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

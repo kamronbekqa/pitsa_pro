@@ -10,6 +10,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { apiUrl, mediaUrl } from '../api';
 
 const benefits = [
   { icon: Pizza, title: 'Asl retseptlar', desc: 'Haqiqiy Napoli uslubida tayyorlanadi.' },
@@ -23,15 +24,13 @@ export default function Home() {
 
   const getProductImage = (image) => {
     if (!image) return '/p1.png';
-    return image.startsWith('http') || image.startsWith('/')
-      ? image
-      : `http://127.0.0.1:8000${image}`;
+    return mediaUrl(image);
   };
 
   useEffect(() => {
     AOS.init({ offset: 100, duration: 600, easing: "ease-in-sine" });
 
-    fetch('http://127.0.0.1:8000/api/store/products/')
+    fetch(apiUrl('/api/store/products/'))
       .then(res => res.json())
       .then(data => {
         const featured = data.filter(p => p.is_featured);

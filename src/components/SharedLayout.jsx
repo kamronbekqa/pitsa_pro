@@ -5,6 +5,7 @@ import './SharedLayout.css';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
+import { apiUrl } from '../api';
 
 export default function SharedLayout() {
   const { cartItems } = useCart();
@@ -41,7 +42,7 @@ export default function SharedLayout() {
             <Link to="/about">Biz haqimizda</Link>
             <Link to="/offers">Chegirmalar</Link>
             <Link to="/contact">Aloqa</Link>
-            <a href="http://127.0.0.1:8000/admin/" target="_blank" rel="noreferrer" className="admin-nav-link">Admin</a>
+            <a href={apiUrl('/admin/')} target="_blank" rel="noreferrer" className="admin-nav-link">Admin</a>
             <Link to="/cart" className="header-cart-link">
               Savatcha {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>

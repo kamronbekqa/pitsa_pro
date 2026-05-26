@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import './Menu.css';
 import AOS from 'aos';
 import { useCart } from '../context/CartContext';
+import { apiUrl } from '../api';
 
 const fallbackImages = ['/p1.png', '/p2.png', '/6.jpg', '/p1.png', '/p2.png', '/6.jpg'];
 
@@ -18,7 +19,7 @@ export default function Menu() {
   useEffect(() => {
     AOS.init({ offset: 100, duration: 600, easing: "ease-in-sine" });
 
-    fetch('http://127.0.0.1:8000/api/store/products/')
+    fetch(apiUrl('/api/store/products/'))
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) setProducts(data);

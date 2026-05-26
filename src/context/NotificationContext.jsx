@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { apiUrl } from '../api';
 
 const NotificationContext = createContext();
 
@@ -64,7 +65,7 @@ export const NotificationProvider = ({ children }) => {
 
     const loadOrders = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/store/my-orders/', {
+        const response = await fetch(apiUrl('/api/store/my-orders/'), {
           headers: { Authorization: `Token ${token}` },
         });
         if (response.status === 401 || response.status === 403) {

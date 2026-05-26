@@ -1,9 +1,10 @@
+import os
+
 import requests
-from django.conf import settings
 
 # Telegram bot sozlamalari
-TELEGRAM_BOT_TOKEN = "8449988131:AAEgtQ79L1L8RfCsNat-ev3gjikV-deNg5Y"
-TELEGRAM_CHAT_ID = "6001392724"
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
 def send_telegram_message(message):
     """
