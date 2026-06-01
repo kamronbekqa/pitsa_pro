@@ -12,7 +12,7 @@ python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py runserver 127.0.0.1:8000
+python manage.py runserver BekPizza.pythonanywhere.com
 ```
 
 Frontend:
@@ -25,7 +25,7 @@ npm run dev:frontend
 Frontend API manzili `.env` faylida boshqariladi:
 
 ```env
-VITE_API_BASE_URL=http://127.0.0.1:8000
+VITE_API_BASE_URL=BekPizza.pythonanywhere.com
 ```
 
 ## PythonAnywhere Deploy
