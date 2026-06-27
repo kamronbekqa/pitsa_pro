@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbar Styles for Admin Panel */
+.admin-body-container *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.admin-body-container *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-body-container *::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+}
+
+.admin-body-container *::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Custom toggle switch styling */
+.toggle-switch-checkbox:checked + .toggle-switch-slider {
+  background-color: #ff7a00 !important;
+}
+
+.toggle-switch-checkbox:checked + .toggle-switch-slider::before {
+  transform: translateX(16px);
+}
+
+/* Smooth transition defaults for all interactive components */
+.transition-admin {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}

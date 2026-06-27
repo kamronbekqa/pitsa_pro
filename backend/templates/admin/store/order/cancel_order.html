@@ -1,20 +1,55 @@
 {% extends "admin/base_site.html" %}
 
 {% block content %}
-<div id="content-main">
-  <div class="module" style="max-width: 820px;">
+<div id="content-main" style="max-width: 720px; margin: 0 auto; padding: 20px 0;">
+  <div class="module">
     <h2>Buyurtma #{{ order.id }} ni bekor qilish</h2>
-    <div style="padding: 18px;">
-      <p><strong>Mijoz:</strong> {{ order.customer_name }}</p>
-      <p><strong>Telefon:</strong> {{ order.customer_phone }}</p>
-      <p><strong>Jami summa:</strong> {{ order.total_price }} so'm</p>
+    
+    <div style="padding: 24px; background: #fff;">
+      <div style="background: var(--pm-danger-light); border: 1px solid #fecaca; border-radius: var(--pm-radius-sm); padding: 16px; margin-bottom: 24px; display: flex; gap: 12px; align-items: flex-start;">
+        <span style="font-size: 20px; line-height: 1;">⚠️</span>
+        <div>
+          <strong style="color: #991b1b; font-size: 14px; display: block; margin-bottom: 4px;">Diqqat!</strong>
+          <span style="color: #7f1d1d; font-size: 13px; line-height: 1.5;">Bu buyurtma bekor qilinadi. Mijozga bekor qilinganligi to'g'risida bildirishnoma yuboriladi. Iltimos, sababini ko'rsating.</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; background: var(--pm-border-light); padding: 16px; border-radius: var(--pm-radius-sm); border: 1px solid var(--pm-border);">
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; color: var(--pm-text-muted); font-weight: 600; display: block; margin-bottom: 2px;">Mijoz</span>
+          <strong style="color: var(--pm-text); font-size: 14px;">{{ order.customer_name }}</strong>
+        </div>
+        <div>
+          <span style="font-size: 11px; text-transform: uppercase; color: var(--pm-text-muted); font-weight: 600; display: block; margin-bottom: 2px;">Telefon raqami</span>
+          <strong style="color: var(--pm-text); font-size: 14px;">{{ order.customer_phone }}</strong>
+        </div>
+        <div style="grid-column: span 2; margin-top: 4px; padding-top: 12px; border-top: 1px dashed var(--pm-border);">
+          <span style="font-size: 11px; text-transform: uppercase; color: var(--pm-text-muted); font-weight: 600; display: block; margin-bottom: 2px;">Jami summa</span>
+          <strong style="color: var(--pm-primary); font-size: 16px;">{{ order.total_price|floatformat:"0" }} so'm</strong>
+        </div>
+      </div>
 
       <form method="post" novalidate>
         {% csrf_token %}
-        {{ form.as_p }}
-        <div class="submit-row" style="padding: 12px 0 0;">
-          <input type="submit" class="default" value="Bekor qilishni tasdiqlash">
-          <a class="button cancel-link" href="{% url 'admin:store_order_changelist' %}">Ortga qaytish</a>
+        <div style="margin-bottom: 24px;">
+          {{ form.reason.label_tag }}
+          <div style="margin-top: 8px;">
+            {{ form.reason }}
+          </div>
+          {% if form.reason.errors %}
+            <ul class="errorlist" style="margin-top: 6px !important;">
+              {% for error in form.reason.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+
+        <div class="submit-row" style="margin: 0; padding: 16px 0 0; background: transparent !important; border: none !important; border-top: 1px solid var(--pm-border) !important; display: flex; gap: 12px; justify-content: flex-end;">
+          <a class="button" href="{% url 'admin:store_order_changelist' %}" style="background: #f1f5f9 !important; color: #475569 !important; border: 1px solid var(--pm-border) !important;">
+            Ortga qaytish
+          </a>
+          <input type="submit" class="default" value="Tasdiqlash va bekor qilish" style="background: var(--pm-danger) !important; color: #fff !important;">
         </div>
       </form>
     </div>

@@ -1,0 +1,512 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static log dashboard_tags %}
+
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block content %}
+{% get_dashboard_stats as stats %}
+{% get_recent_orders as recent_orders %}
+
+<style>
+/* ── Dashboard Page Styling ────────────────────────────────────────────── */
+.pm-dash-header {
+  margin-bottom: 28px;
+}
+.pm-dash-title {
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  color: var(--pm-text);
+  letter-spacing: -0.5px;
+  margin: 0 0 6px 0 !important;
+}
+.pm-dash-subtitle {
+  color: var(--pm-text-secondary);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ── Stats Grid ────────────────────────────────────────────────────────── */
+.pm-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.pm-stat-card {
+  background: var(--pm-card-bg);
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius);
+  padding: 20px;
+  box-shadow: var(--pm-card-shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 250ms var(--pm-ease);
+  position: relative;
+  overflow: hidden;
+}
+.pm-stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 250ms;
+}
+.pm-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--pm-card-shadow-hover);
+  border-color: #cbd5e1;
+}
+.pm-stat-card.revenue-card:hover::after { background: var(--pm-success); }
+.pm-stat-card.orders-card:hover::after { background: var(--pm-primary); }
+.pm-stat-card.today-card:hover::after { background: var(--pm-info); }
+.pm-stat-card.products-card:hover::after { background: var(--pm-warning); }
+.pm-stat-card.promos-card:hover::after { background: #8b5cf6; }
+.pm-stat-card.messages-card:hover::after { background: var(--pm-danger); }
+
+.pm-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.revenue-card .pm-stat-icon { background: var(--pm-success-light); color: var(--pm-success); }
+.orders-card .pm-stat-icon { background: var(--pm-primary-light); color: var(--pm-primary); }
+.today-card .pm-stat-icon { background: var(--pm-info-light); color: var(--pm-info); }
+.products-card .pm-stat-icon { background: var(--pm-warning-light); color: var(--pm-warning); }
+.promos-card .pm-stat-icon { background: #f5f3ff; color: #8b5cf6; }
+.messages-card .pm-stat-icon { background: var(--pm-danger-light); color: var(--pm-danger); }
+
+.pm-stat-content {
+  display: flex;
+  flex-direction: column;
+}
+.pm-stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pm-text-secondary);
+}
+.pm-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--pm-text);
+  margin-top: 2px;
+}
+
+/* ── Content Grid ──────────────────────────────────────────────────────── */
+.pm-dash-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .pm-dash-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pm-dash-section {
+  background: var(--pm-card-bg);
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius);
+  box-shadow: var(--pm-card-shadow);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.pm-dash-section-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--pm-border);
+  background: var(--pm-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pm-dash-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--pm-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pm-dash-section-title svg {
+  width: 18px;
+  height: 18px;
+  color: var(--pm-text-secondary);
+}
+.pm-dash-section-action {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pm-primary);
+}
+
+/* ── Recent Orders Table ────────────────────────────────────────────────── */
+.pm-recent-table-wrapper {
+  overflow-x: auto;
+}
+.pm-recent-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.pm-recent-table th, .pm-recent-table td {
+  padding: 14px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--pm-border-light);
+  font-size: 13px;
+}
+.pm-recent-table th {
+  background: var(--pm-card-bg);
+  color: var(--pm-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+.pm-recent-table tr:last-child td {
+  border-bottom: none;
+}
+.pm-recent-table tbody tr {
+  transition: background 150ms;
+}
+.pm-recent-table tbody tr:hover {
+  background: var(--pm-row-hover, rgba(255, 106, 0, 0.04));
+}
+.pm-recent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.pm-recent-badge.status-accepted { background: var(--pm-warning-light); color: var(--pm-warning); }
+.pm-recent-badge.status-approved { background: var(--pm-success-light); color: var(--pm-success); }
+.pm-recent-badge.status-delivering { background: var(--pm-info-light); color: var(--pm-info); }
+.pm-recent-badge.status-completed { background: #f5f3ff; color: #8b5cf6; }
+.pm-recent-badge.status-cancelled { background: var(--pm-danger-light); color: var(--pm-danger); }
+
+/* ── Activity / Action Log ─────────────────────────────────────────────── */
+.pm-log-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pm-log-item {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--pm-border-light);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.pm-log-item:last-child {
+  border-bottom: none;
+}
+.pm-log-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.pm-log-icon.add { background: var(--pm-success-light); color: var(--pm-success); }
+.pm-log-icon.change { background: var(--pm-info-light); color: var(--pm-info); }
+.pm-log-icon.delete { background: var(--pm-danger-light); color: var(--pm-danger); }
+
+.pm-log-content {
+  flex: 1;
+  min-width: 0;
+}
+.pm-log-title {
+  font-size: 13px;
+  color: var(--pm-text);
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pm-log-meta {
+  font-size: 11px;
+  color: var(--pm-text-muted);
+}
+
+/* ── Model Admin Grid (Fallback & Custom Navigation) ───────────────────── */
+.pm-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+.pm-model-card {
+  border: 1px solid var(--pm-border-light);
+  border-radius: var(--pm-radius-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--pm-card-bg);
+  transition: all 200ms;
+}
+.pm-model-card:hover {
+  border-color: var(--pm-primary);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+.pm-model-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pm-text);
+  margin: 0 0 4px 0;
+}
+.pm-model-app {
+  font-size: 11px;
+  color: var(--pm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+.pm-model-links {
+  display: flex;
+  gap: 8px;
+}
+.pm-model-btn {
+  flex: 1;
+  text-align: center;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--pm-radius-xs);
+  transition: all 150ms;
+}
+.pm-model-btn.manage {
+  background: var(--pm-border-light);
+  color: var(--pm-text-secondary);
+}
+.pm-model-btn.manage:hover {
+  background: var(--pm-border);
+  color: var(--pm-text);
+}
+.pm-model-btn.add {
+  background: var(--pm-primary-light);
+  color: var(--pm-primary);
+}
+.pm-model-btn.add:hover {
+  background: var(--pm-primary);
+  color: #fff;
+}
+</style>
+
+<div class="pm-dash-header">
+  <h1 class="pm-dash-title">Xush kelibsiz! 👋</h1>
+  <p class="pm-dash-subtitle">Restoraningiz buyurtmalari, menyu elementlari va xabarlarini bitta joydan boshqaring.</p>
+</div>
+
+<!-- Statistics Cards -->
+<div class="pm-stats-grid">
+  <!-- Revenue Card -->
+  <div class="pm-stat-card revenue-card">
+    <div class="pm-stat-icon">💵</div>
+    <div class="pm-stat-content">
+      <span class="pm-stat-label">Umumiy tushum</span>
+      <span class="pm-stat-value">{{ stats.revenue|floatformat:"0" }} so'm</span>
+    </div>
+  </div>
+
+  <!-- Today Orders Card -->
+  <div class="pm-stat-card today-card">
+    <div class="pm-stat-icon">📦</div>
+    <div class="pm-stat-content">
+      <span class="pm-stat-label">Bugungi buyurtmalar</span>
+      <span class="pm-stat-value">{{ stats.today_orders }} ta</span>
+    </div>
+  </div>
+
+  <!-- Total Orders Card -->
+  <div class="pm-stat-card orders-card">
+    <div class="pm-stat-icon">🛍️</div>
+    <div class="pm-stat-content">
+      <span class="pm-stat-label">Jami buyurtmalar</span>
+      <span class="pm-stat-value">{{ stats.total_orders }} ta</span>
+    </div>
+  </div>
+
+  <!-- Active Products Card -->
+  <div class="pm-stat-card products-card">
+    <div class="pm-stat-icon">🍕</div>
+    <div class="pm-stat-content">
+      <span class="pm-stat-label">Faol menyu elementlari</span>
+      <span class="pm-stat-value">{{ stats.active_products }} ta</span>
+    </div>
+  </div>
+
+  <!-- Active Discounts Card -->
+  <div class="pm-stat-card promos-card">
+    <div class="pm-stat-icon">%</div>
+    <div class="pm-stat-content">
+      <span class="pm-stat-label">Faol chegirmalar</span>
+      <span class="pm-stat-value">{{ stats.active_promos }} ta</span>
+    </div>
+  </div>
+
+  <!-- Messages Card -->
+  <div class="pm-stat-card messages-card">
+    <div class="pm-stat-icon">📩</div>
+    <div class="pm-stat-content">
+      <span class="pm-stat-label">Yangi xabarlar</span>
+      <span class="pm-stat-value">{{ stats.new_messages }} ta</span>
+    </div>
+  </div>
+</div>
+
+<div class="pm-dash-grid">
+  <!-- Left Side: Recent Orders Table -->
+  <div class="pm-dash-left">
+    <div class="pm-dash-section">
+      <div class="pm-dash-section-header">
+        <h2 class="pm-dash-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Oxirgi buyurtmalar
+        </h2>
+        <a href="{% url 'admin:store_order_changelist' %}" class="pm-dash-section-action">Barchasini ko'rish →</a>
+      </div>
+      <div class="pm-recent-table-wrapper">
+        {% if recent_orders %}
+          <table class="pm-recent-table">
+            <thead>
+              <tr>
+                <th>Buyurtma</th>
+                <th>Mijoz</th>
+                <th>Telefon</th>
+                <th>Jami Summa</th>
+                <th>Holati</th>
+                <th>Sana</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in recent_orders %}
+                <tr>
+                  <td>
+                    <a href="{% url 'admin:store_order_change' order.id %}" style="font-weight: 700;">
+                      #{{ order.id }}
+                    </a>
+                  </td>
+                  <td>{{ order.customer_name }}</td>
+                  <td>{{ order.customer_phone }}</td>
+                  <td><strong>{{ order.total_price|floatformat:"0" }} so'm</strong></td>
+                  <td>
+                    {% if order.status == 'accepted' %}
+                      <span class="pm-recent-badge status-accepted">⏳ Qabul qilindi</span>
+                    {% elif order.status == 'approved' %}
+                      <span class="pm-recent-badge status-approved">✅ Tasdiqlandi</span>
+                    {% elif order.status == 'delivering' %}
+                      <span class="pm-recent-badge status-delivering">🚗 Yetkazilmoqda</span>
+                    {% elif order.status == 'completed' %}
+                      <span class="pm-recent-badge status-completed">🎉 Yakunlandi</span>
+                    {% elif order.status == 'cancelled' %}
+                      <span class="pm-recent-badge status-cancelled">❌ Bekor qilindi</span>
+                    {% endif %}
+                  </td>
+                  <td style="color: var(--pm-text-secondary);">{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div style="padding: 32px; text-align: center; color: var(--pm-text-muted);">
+            Buyurtmalar hali mavjud emas.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side: Recent Actions Log -->
+  <div class="pm-dash-right">
+    <div class="pm-dash-section">
+      <div class="pm-dash-section-header">
+        <h2 class="pm-dash-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Oxirgi amallar
+        </h2>
+      </div>
+      {% get_admin_log 6 as admin_log for_user user %}
+      {% if admin_log %}
+        <ul class="pm-log-list">
+          {% for entry in admin_log %}
+            <li class="pm-log-item">
+              <span class="pm-log-icon {% if entry.is_addition %}add{% elif entry.is_change %}change{% else %}delete{% endif %}">
+                {% if entry.is_addition %}＋{% elif entry.is_change %}✎{% else %}✕{% endif %}
+              </span>
+              <div class="pm-log-content">
+                <p class="pm-log-title">
+                  {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                  {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                  {% endif %}
+                </p>
+                <span class="pm-log-meta">
+                  {% if entry.content_type %}
+                    {{ entry.content_type.name|capfirst }}
+                  {% else %}
+                    Noma'lum tur
+                  {% endif %}
+                </span>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div style="padding: 24px; text-align: center; color: var(--pm-text-muted);">
+          Hozircha hech qanday amal bajarilmagan.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Fallback Model Admin Grid (ensures other apps/models display & keep functionality) -->
+{% if app_list %}
+  <div class="pm-dash-section" style="margin-top: 12px;">
+    <div class="pm-dash-section-header">
+      <h2 class="pm-dash-section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        Tizim sozlamalari va modellar
+      </h2>
+    </div>
+    <div class="pm-admin-grid">
+      {% for app in app_list %}
+        {% for model in app.models %}
+          <div class="pm-model-card">
+            <div>
+              <h3 class="pm-model-name">{{ model.name }}</h3>
+              <p class="pm-model-app">{{ app.name }}</p>
+            </div>
+            <div class="pm-model-links">
+              {% if model.admin_url %}
+                <a href="{{ model.admin_url }}" class="pm-model-btn manage">Boshqarish</a>
+              {% endif %}
+              {% if model.add_url %}
+                <a href="{{ model.add_url }}" class="pm-model-btn add">Qo'shish</a>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}

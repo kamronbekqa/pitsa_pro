@@ -1,0 +1,53 @@
+/* ==========================================
+   ADMIN LAYOUT - Root shell
+   ========================================== */
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+/* Body (everything except the sidebar) */
+.admin-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-left: 240px;
+  transition: margin-left 0.25s ease;
+}
+
+/* Main content area below header */
+.admin-main-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Overlay that closes sidebar on mobile */
+.admin-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 99;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  .admin-body {
+    margin-left: 0;
+  }
+
+  .admin-main-content {
+    padding: 16px;
+  }
+
+  .admin-sidebar-overlay {
+    display: block;
+  }
+}
