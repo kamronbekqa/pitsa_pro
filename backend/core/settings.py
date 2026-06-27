@@ -38,7 +38,7 @@ SECRET_KEY = os.getenv(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_bool("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost")
+ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "BekPizza.pythonanywhere.com,localhost")
 
 
 # Application definition
